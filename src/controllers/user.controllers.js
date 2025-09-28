@@ -25,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (
         fields.some((field) =>
-            field?.trim() === "" // Returns true if field is NOT null/undefined AND is empty after trimming
+            field?.trim() === "" 
         )
     ) {
         // Logic to handle missing fields (e.g., throw an error)
@@ -40,11 +40,15 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    //const coverImageLocalPath = req.files?.coverImage[0]?.path
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "avatar is required");
 
+    }
+    let coverImageLocalPath;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files?.coverImage[0]?.path
     }
 
     const absoluteAvatarPath = path.resolve(avatarLocalPath);
@@ -52,7 +56,8 @@ const registerUser = asyncHandler(async (req, res) => {
     
     const avatar = await uploadOnCloudinary(absoluteAvatarPath)
     const coverImage = await uploadOnCloudinary(absoluteCoverImagePath)
-
+    
+    
 
     if (!avatar) {
         throw new ApiError(400, "avatar is not uploaded");
