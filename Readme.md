@@ -77,14 +77,56 @@ Use a tool like [Postman](https://www.postman.com/) or `curl` to interact with e
 
 ## API Endpoints
 
-| Method | Endpoint                | Description                |
-|--------|-------------------------|----------------------------|
-| GET    | `/api/search`           | Search videos by keyword   |
-| GET    | `/api/videos/:id`       | Get video details by ID    |
-| GET    | `/api/channels/:id`     | Get channel info by ID     |
-| POST   | `/api/auth/login`       | User login (JWT)           |
+## User API Endpoints
 
-For full API documentation, see [docs/API.md](docs/API.md).
+| Method | Endpoint                        | Description                                   | Auth Required |
+|--------|----------------------------------|-----------------------------------------------|--------------|
+| POST   | `/api/register`                  | Register a new user (avatar & cover image upload supported) | No           |
+| POST   | `/api/login`                     | Log in and receive access/refresh tokens      | No           |
+| POST   | `/api/logout`                    | Log out (invalidate refresh token)            | Yes          |
+| POST   | `/api/refresh-token`             | Get new access token with refresh token       | No           |
+| POST   | `/api/change-password`           | Change current user password                  | Yes          |
+| GET    | `/api/current-user`              | Get current authenticated user's profile      | Yes          |
+| PATCH  | `/api/update-account-details`    | Update user account details                   | Yes          |
+| PATCH  | `/api/update-avatar`             | Update avatar image (single file upload)      | Yes          |
+| PATCH  | `/api/update-cover-image`        | Update cover image (single file upload)       | Yes          |
+| GET    | `/api/channel/:username`         | Get channel profile by username               | No           |
+| GET    | `/api/watch-history`             | Get user's watch history                      | Yes          |
+
+**Note:**  
+- Endpoints marked with “Auth Required” need a valid JWT in the `Authorization` header:  
+  `Authorization: Bearer <token>`
+- For file uploads (`avatar`, `coverImage`), use `multipart/form-data`.
+
+### Example: Register User
+
+```http
+POST /api/register
+Content-Type: multipart/form-data
+
+Form fields:
+- username
+- email
+- password
+- avatar (file)
+- coverImage (file)
+```
+
+### Example: Login
+
+```http
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "yourPassword"
+}
+```
+
+---
+
+For more details on request/response schemas, check the controller files or open an issue for documentation support!
 
 ## Authentication
 
