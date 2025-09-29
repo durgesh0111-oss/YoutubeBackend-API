@@ -468,6 +468,12 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
         }
     ])
 
+    return res
+        .status(200)
+        .json(
+            new apiResponse(200, user[0]?.watchHistory || [], "User watch history fetched successfully")
+        );
+
 })
 
 export {
