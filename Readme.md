@@ -1,4 +1,4 @@
-# YoutubeBackend-API
+# VideoTubeBackend-API
 
 A RESTful backend API designed for interacting with YouTube data, including searching, fetching video details, and more. Built for scalability, easy integration, and secure access.
 
