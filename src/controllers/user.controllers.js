@@ -25,6 +25,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 
 
+
 const registerUser = asyncHandler(async (req, res) => {
     // console.log(req.body);
 
@@ -334,6 +335,11 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Error while uploading avatar to Cloudinary.");
     }
 
+    // const oldCoverImage = req.user?.coverImage;
+    // if (oldCoverImage) {
+    //     await deleteOldImage(oldCoverImage);
+    // }
+    
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
@@ -354,18 +360,6 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
             )
         );
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 export {
 
