@@ -9,15 +9,16 @@ import path from 'path'
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await User.findById(userId)
-        const accessToken = user.generateAccessToken()
-        const refreshToken = user.generateRefreshToken()
+        const accessToken = await user.generateAccessToken()
+        const refreshToken = await user.generateRefreshToken()
 
         user.refreshToken = refreshToken
         await user.save({validateBeforeSave:false})
         return { accessToken, refreshToken }
         
     } catch (err) {
-        throw new ApiError(500,"Something went wrong")
+        console.error("Token Generation Error:", err);
+        throw new ApiError(500, "Something went wrong while generating tokens");
     }
 }
 
@@ -106,7 +107,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
     
-    // grt email or username with password from front end
+    // get email or username with password from front end
     //then velidate if any filed is empty or not
     //then check if user exist in db
     //if user exist check password is password correct 
@@ -114,13 +115,16 @@ const loginUser = asyncHandler(async (req, res) => {
     //send cookie
     
     const { email, username, password } = req.body;
-    if (!username || !email) {
-        throw new ApiError(400,"username or email require")
+    if ((!username && !email) || !password) { 
+        throw new ApiError(400, "Username or email, and password are required.");
     }
 
     const user = await User.findOne({
-        $or:[{username},{email}]
-    })
+        $or: [
+            { username: username?.toLowerCase() },
+            { email: email?.toLowerCase() }
+        ]
+    });
     if (!user) {
         throw new ApiError(404,"user not found")
     }
@@ -147,7 +151,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 {
                     user:loggedUser,accessToken,refreshToken
                 },
-                message = "User logged In Successfully"
+                "User logged In Successfully"
              )
         )
 
